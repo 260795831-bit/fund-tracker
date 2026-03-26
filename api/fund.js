@@ -4,40 +4,62 @@ export default async function handler(req, res) {
   if (!code) return res.status(400).json({ error: '请提供基金代码' });
 
   try {
-    // 新浪财经基金实时估值接口
-    const url = `https://hq.sinajs.cn/list=f_${code}`;
+    // 用东方财富基金估值接口（支持新基金）
+    const url = `https://fundgz.1234567.com.cn/gz/${code}.js?rt=${Date.now()}`;
     const response = await fetch(url, {
-      headers: { Referer: 'https://finance.sina.com.cn' }
+      headers: {
+        'Referer': 'https://fund.eastmoney.com/',
+        'User-Agent': 'Mozilla/5.0'
+      }
     });
     const text = await response.text();
+    const match = text.match(/jsonpgz\((\{.*?\})\)/);
 
-    // 返回格式: var hq_str_f_025832="基金名称,当日净值,昨日净值,涨跌额,涨跌幅,更新时间,...";
-    const match = text.match(/"([^"]+)"/);
-    if (!match || !match[1] || match[1].split(',').length < 5) {
+    if (match) {
+      // 天天基金接口成功
+      const data = JSON.parse(match[1]);
+      return res.status(200).json({
+        code: data.fundcode,
+        name: data.name,
+        lastNav: data.dwjz,
+        lastNavDate: data.jzrq,
+        estimatedNav: data.gsz,
+        estimatedChange: parseFloat(data.gszzl).toFixed(2),
+        estimatedTime: data.gztime,
+      });
+    }
+
+    // 回退：用东方财富净值接口（不含盘中估值，只有昨日净值）
+    const url2 = `https://api.fund.eastmoney.com/f10/lsjz?fundCode=${code}&pageIndex=1&pageSize=1`;
+    const res2 = await fetch(url2, {
+      headers: {
+        'Referer': 'https://fund.eastmoney.com/',
+        'User-Agent': 'Mozilla/5.0'
+      }
+    });
+    const json2 = await res2.json();
+    const item = json2?.Data?.LSJZList?.[0];
+
+    if (!item) {
       return res.status(404).json({ error: '未找到该基金，请检查基金代码' });
     }
 
-    const parts = match[1].split(',');
-    const name = parts[0];
-    const estimatedNav = parts[1];   // 实时估值
-    const lastNav = parts[2];        // 昨日净值
-    const change = parts[3];         // 涨跌额
-    const changeRate = parts[4];     // 涨跌幅（如 0.86%）
-    const updateTime = parts[5] || '';
+    // 再取基金名称
+    const url3 = `https://fundmobapi.eastmoney.com/FundMNewApi/FundMNFInfo?plat=Android&appType=ttjj&product=EFund&Version=1&deviceid=x&Fcodes=${code}`;
+    const res3 = await fetch(url3, { headers: { 'User-Agent': 'Mozilla/5.0' } });
+    const json3 = await res3.json();
+    const name = json3?.Datas?.[0]?.SHORTNAME || code;
 
-    if (!name || !estimatedNav) {
-      return res.status(404).json({ error: '未找到该基金，请检查基金代码' });
-    }
-
-    res.status(200).json({
+    return res.status(200).json({
       code,
       name,
-      lastNav,
-      lastNavDate: '',
-      estimatedNav,
-      estimatedChange: parseFloat(changeRate).toFixed(2),
-      estimatedTime: updateTime,
+      lastNav: item.DWJZ,
+      lastNavDate: item.FSRQ,
+      estimatedNav: item.DWJZ,        // 无盘中估值时用昨日净值代替
+      estimatedChange: item.JZZZL,
+      estimatedTime: item.FSRQ + ' (昨日净值)',
     });
+
   } catch (e) {
     res.status(500).json({ error: '数据获取失败: ' + e.message });
   }
