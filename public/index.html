@@ -1,0 +1,119 @@
+```html
+
+
+
+  
+  
+  基金实时估值
+  
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; background: #f5f7fa; min-height: 100vh; padding: 20px; }
+    h1 { text-align: center; color: #333; margin-bottom: 24px; font-size: 22px; }
+    .input-area { display: flex; gap: 8px; max-width: 600px; margin: 0 auto 24px; }
+    input { flex: 1; padding: 10px 14px; border: 1px solid #ddd; border-radius: 8px; font-size: 15px; outline: none; }
+    input:focus { border-color: #4f87ff; }
+    button { padding: 10px 20px; background: #4f87ff; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-size: 15px; }
+    button:hover { background: #3a6fd8; }
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; max-width: 900px; margin: 0 auto; }
+    .card { background: #fff; border-radius: 12px; padding: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .fund-name { font-size: 15px; font-weight: 600; color: #333; }
+    .fund-code { font-size: 12px; color: #999; }
+    .remove-btn { background: none; border: none; color: #ccc; cursor: pointer; font-size: 18px; padding: 0 4px; }
+    .remove-btn:hover { color: #f55; }
+    .nav-row { display: flex; justify-content: space-between; align-items: flex-end; }
+    .estimated-nav { font-size: 28px; font-weight: 700; }
+    .change { font-size: 14px; font-weight: 600; padding: 3px 8px; border-radius: 4px; }
+    .up { color: #e5373f; background: #fff0f0; }
+    .down { color: #1aad19; background: #f0fff0; }
+    .flat { color: #999; background: #f5f5f5; }
+    .meta { margin-top: 10px; font-size: 12px; color: #aaa; }
+    .last-nav { font-size: 12px; color: #999; margin-top: 6px; }
+    .error-msg { color: #e5373f; font-size: 13px; margin-top: 4px; text-align: center; }
+    .refresh-btn { display: block; margin: 0 auto 20px; padding: 8px 20px; background: #fff; border: 1px solid #4f87ff; color: #4f87ff; border-radius: 8px; cursor: pointer; font-size: 14px; }
+    .refresh-btn:hover { background: #f0f5ff; }
+  
+
+
+  📈 基金实时估值
+  
+    
+    添加
+  
+  
+  🔄 刷新全部
+  
+
+  
+    let funds = JSON.parse(localStorage.getItem('funds') || '[]');
+
+    async function fetchFund(code) {
+      const res = await fetch(`/api/fund?code=${code}`);
+      if (!res.ok) throw new Error((await res.json()).error);
+      return await res.json();
+    }
+
+    async function addFund() {
+      const code = document.getElementById('codeInput').value.trim();
+      const errEl = document.getElementById('error');
+      errEl.textContent = '';
+      if (!code || !/^\d{6}$/.test(code)) { errEl.textContent = '请输入6位基金代码'; return; }
+      if (funds.find(f => f.code === code)) { errEl.textContent = '该基金已添加'; return; }
+      try {
+        const data = await fetchFund(code);
+        funds.push(data);
+        saveFunds();
+        renderCards();
+        document.getElementById('codeInput').value = '';
+      } catch(e) { errEl.textContent = e.message; }
+    }
+
+    async function refreshAll() {
+      const updated = await Promise.all(funds.map(f => fetchFund(f.code).catch(() => f)));
+      funds = updated;
+      saveFunds();
+      renderCards();
+    }
+
+    function removeFund(code) {
+      funds = funds.filter(f => f.code !== code);
+      saveFunds();
+      renderCards();
+    }
+
+    function saveFunds() { localStorage.setItem('funds', JSON.stringify(funds)); }
+
+    function renderCards() {
+      const container = document.getElementById('cards');
+      if (!funds.length) { container.innerHTML = '暂无基金，请添加基金代码'; return; }
+      container.innerHTML = funds.map(f => {
+        const chg = parseFloat(f.estimatedChange);
+        const cls = chg > 0 ? 'up' : chg < 0 ? 'down' : 'flat';
+        const sign = chg > 0 ? '+' : '';
+        return `
+          
+            
+              
+                ${f.name}
+                ${f.code}
+              
+              ✕
+            
+            
+              ${f.estimatedNav}
+              ${sign}${chg.toFixed(2)}%
+            
+            昨日净值：${f.lastNav}（${f.lastNavDate}）
+            估值时间：${f.estimatedTime}
+          `;
+      }).join('');
+    }
+
+    document.getElementById('codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') addFund(); });
+    renderCards();
+  
+
+
+```
+
+---
