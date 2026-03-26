@@ -9,12 +9,10 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'PingFang SC',sans-serif;background:#f2f4f7;min-height:100vh;padding:16px}
 h1{font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
 .date-bar{font-size:12px;color:#999;margin-bottom:16px}
-/* 汇总卡片 */
 .summary{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .sum-item label{font-size:11px;color:#999}
 .sum-item .val{font-size:20px;font-weight:700;margin-top:2px}
 .sum-item .sub{font-size:12px;margin-top:2px}
-/* 输入区 */
 .input-area{display:flex;gap:8px;margin-bottom:12px}
 .input-area input{flex:1;padding:10px 14px;border:1px solid #e0e0e0;border-radius:10px;font-size:15px;outline:none;background:#fff}
 .input-area input:focus{border-color:#4f87ff}
@@ -22,35 +20,30 @@ h1{font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
 .btn:hover{background:#3a6fd8}
 .btn-outline{background:#fff;color:#4f87ff;border:1px solid #4f87ff}
 .btn-outline:hover{background:#f0f5ff}
-/* 基金卡片 */
 .card{background:#fff;border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,0.06)}
 .card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
-.fund-title .name{font-size:16px;font-weight:700;color:#1a1a1a}
+.fund-title .name{font-size:15px;font-weight:700;color:#1a1a1a}
 .fund-title .meta{font-size:11px;color:#aaa;margin-top:3px}
 .fund-title .tag{display:inline-block;background:#eef3ff;color:#4f87ff;font-size:10px;padding:1px 6px;border-radius:4px;margin-right:4px}
 .nav-block{text-align:right}
-.nav-block .nav{font-size:24px;font-weight:700}
+.nav-block .nav{font-size:22px;font-weight:700}
 .nav-block .change-badge{font-size:12px;font-weight:600;padding:2px 7px;border-radius:4px;margin-top:3px;display:inline-block}
 .nav-block .nav-sub{font-size:11px;color:#aaa;margin-top:2px}
 .up{color:#e5373f}.down{color:#1aad19}.flat{color:#999}
 .up-bg{background:#fff0f0;color:#e5373f}
 .down-bg{background:#f0fff0;color:#1aad19}
 .flat-bg{background:#f5f5f5;color:#999}
-/* 数据格子 */
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .cell{background:#f8f9fb;border-radius:8px;padding:8px 10px}
 .cell label{font-size:11px;color:#999}
 .cell .cv{font-size:14px;font-weight:600;color:#1a1a1a;margin-top:2px}
-/* 走势图 */
 .chart-wrap{margin-bottom:12px}
 .chart-title{font-size:12px;color:#999;margin-bottom:6px}
-.mini-chart{display:flex;align-items:flex-end;gap:4px;height:48px}
+.mini-chart{display:flex;align-items:flex-end;gap:4px;height:60px}
 .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px}
-.bar{width:100%;border-radius:3px 3px 0 0;min-height:4px;transition:height .3s}
+.bar{width:100%;border-radius:3px 3px 0 0;min-height:4px}
 .bar-date{font-size:9px;color:#bbb}
 .bar-pct{font-size:9px}
-/* 操作记录 */
 .ops-title{font-size:12px;color:#999;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
 .op-list{max-height:120px;overflow-y:auto}
 .op-item{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:12px}
@@ -61,66 +54,92 @@ h1{font-size:18px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
 .op-add-form{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
 .op-add-form select,.op-add-form input{flex:1;min-width:80px;padding:6px 8px;border:1px solid #e0e0e0;border-radius:8px;font-size:13px;outline:none}
 .op-add-form button{padding:6px 12px;background:#4f87ff;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px}
-/* 删除按钮 */
-.del-btn{background:none;border:none;color:#ddd;cursor:pointer;font-size:18px;padding:0 2px;line-height:1}
+.del-btn{background:none;border:none;color:#ddd;cursor:pointer;font-size:13px;padding:0 2px}
 .del-btn:hover{color:#f55}
-/* 错误 */
 .err{color:#e5373f;font-size:13px;text-align:center;margin-bottom:8px}
-/* 空状态 */
 .empty{text-align:center;color:#bbb;padding:40px 0;font-size:14px}
-/* 操作记录展开 */
 .toggle-ops{background:none;border:none;color:#4f87ff;font-size:11px;cursor:pointer}
+.loading{color:#aaa;font-size:13px;text-align:center;padding:8px}
 </style>
 </head>
 <body>
 
 <h1>📊 我的基金持仓</h1>
 <div class="date-bar" id="dateBar"></div>
-
-<!-- 汇总 -->
 <div class="summary" id="summary" style="display:none">
   <div class="sum-item"><label>总市值</label><div class="val" id="sTotal">--</div></div>
   <div class="sum-item"><label>总成本</label><div class="val" id="sCost">--</div></div>
-  <div class="sum-item"><label>持有收益</label><div class="val" id="sProfit">--</div><div class="sub" id="sProfitR">--</div></div>
-  <div class="sum-item"><label>今日估算盈亏</label><div class="val" id="sTodayPnl">--</div><div class="sub" id="sTodayR">--</div></div>
+  <div class="sum-item"><label>持有收益</label><div class="val" id="sProfit">--</div><div class="sub" id="sProfitR"></div></div>
+  <div class="sum-item"><label>今日估算盈亏</label><div class="val" id="sTodayPnl">--</div><div class="sub" id="sTodayR"></div></div>
 </div>
 
-<!-- 添加基金 -->
 <div class="input-area">
-  <input id="codeInput" type="text" placeholder="输入基金代码，如 025832" maxlength="6"/>
+  <input id="codeInput" type="text" placeholder="输入基金代码添加新基金" maxlength="6"/>
   <button class="btn" onclick="addFund()">添加</button>
   <button class="btn btn-outline" onclick="refreshAll()">刷新</button>
 </div>
 <div id="errMsg" class="err"></div>
-
 <div id="cards"></div>
 
 <script>
-// ── 数据存储 ────────────────────────────────────────
-let state = JSON.parse(localStorage.getItem('fundState') || '{}');
-// state = { funds: [{code,name,...,shares,costNav,ops:[]}], ... }
-if (!state.funds) state.funds = [];
+// ── 预置持仓数据 ─────────────────────────────────────
+const DEFAULT_FUNDS = [
+  { code:'025832', name:'天弘中证电网设备主题指数A', fundType:'指数基金',
+    shares:6238.55, costNav:1.2412,
+    ops:[{date:'2026-03-25',type:'buy',nav:1.2412,amount:7742.26,shares:'6238.55'}] },
+  { code:'018956', name:'中航机遇领航混合A', fundType:'混合基金',
+    shares:807.02, costNav:3.7174,
+    ops:[{date:'2026-03-25',type:'buy',nav:3.7174,amount:3000,shares:'807.02'}] },
+  { code:'025856', name:'华夏中证电网设备主题ETF联接A', fundType:'指数基金',
+    shares:2048.51, costNav:1.3667,
+    ops:[{date:'2026-03-25',type:'buy',nav:1.3667,amount:2800,shares:'2048.51'}] },
+  { code:'022364', name:'永赢科技智选混合A', fundType:'混合基金',
+    shares:410.99, costNav:3.8928,
+    ops:[{date:'2026-03-25',type:'buy',nav:3.8928,amount:1600,shares:'410.99'}] },
+];
 
-function save() { localStorage.setItem('fundState', JSON.stringify(state)); }
+// ── 状态初始化 ───────────────────────────────────────
+let state = JSON.parse(localStorage.getItem('fundState2') || 'null');
+if (!state) {
+  state = { funds: DEFAULT_FUNDS.map(f => ({...f, estimatedNav:null, estimatedChange:null, estimatedTime:null, lastNav:null, lastNavDate:null, lastChange:null, history:[] })) };
+  save();
+}
 
-// ── 工具函数 ────────────────────────────────────────
-const yuan = v => v == null ? '--' : '¥' + parseFloat(v).toFixed(2);
-const pct = v => v == null ? '--' : (v > 0 ? '+' : '') + parseFloat(v).toFixed(2) + '%';
+function save() { localStorage.setItem('fundState2', JSON.stringify(state)); }
+
+// ── 工具 ─────────────────────────────────────────────
+const yuan = v => v == null || isNaN(v) ? '--' : '¥' + parseFloat(v).toFixed(2);
+const pct = v => v == null || isNaN(v) ? '--' : (v > 0 ? '+' : '') + parseFloat(v).toFixed(2) + '%';
 const cls = v => v > 0 ? 'up' : v < 0 ? 'down' : 'flat';
 const bgCls = v => v > 0 ? 'up-bg' : v < 0 ? 'down-bg' : 'flat-bg';
-function today() { return new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'2-digit',day:'2-digit'}).replace(/\//g,'-'); }
+const today = () => new Date().toISOString().slice(0,10);
 
-// ── 日期栏 ──────────────────────────────────────────
 document.getElementById('dateBar').textContent = today() + ' 盘中';
 
-// ── 获取基金数据 ────────────────────────────────────
+// ── API ──────────────────────────────────────────────
 async function fetchFund(code) {
   const r = await fetch(`/api/fund?code=${code}`);
   if (!r.ok) throw new Error((await r.json()).error || '请求失败');
-  return await r.json();
+  return r.json();
 }
 
-// ── 添加基金 ────────────────────────────────────────
+// ── 刷新所有行情 ─────────────────────────────────────
+async function refreshAll() {
+  document.getElementById('errMsg').textContent = '刷新中...';
+  const updated = await Promise.all(state.funds.map(async f => {
+    try {
+      const d = await fetchFund(f.code);
+      return { ...f, estimatedNav: d.estimatedNav, estimatedChange: d.estimatedChange,
+               estimatedTime: d.estimatedTime, lastNav: d.lastNav,
+               lastNavDate: d.lastNavDate, lastChange: d.lastChange, history: d.history || [] };
+    } catch { return f; }
+  }));
+  state.funds = updated;
+  save(); renderAll();
+  document.getElementById('errMsg').textContent = '';
+}
+
+// ── 添加基金 ─────────────────────────────────────────
 async function addFund() {
   const code = document.getElementById('codeInput').value.trim();
   const errEl = document.getElementById('errMsg');
@@ -128,112 +147,94 @@ async function addFund() {
   if (!/^\d{6}$/.test(code)) { errEl.textContent = '请输入6位基金代码'; return; }
   if (state.funds.find(f => f.code === code)) { errEl.textContent = '已添加该基金'; return; }
   try {
-    const data = await fetchFund(code);
-    state.funds.push({ ...data, shares: 0, costNav: 0, ops: [] });
+    const d = await fetchFund(code);
+    state.funds.push({ ...d, shares:0, costNav:0, ops:[] });
     save(); renderAll();
     document.getElementById('codeInput').value = '';
   } catch(e) { errEl.textContent = e.message; }
 }
 
-// ── 刷新全部 ────────────────────────────────────────
-async function refreshAll() {
-  const updated = await Promise.all(state.funds.map(async f => {
-    try {
-      const d = await fetchFund(f.code);
-      return { ...f, ...d };
-    } catch { return f; }
-  }));
-  state.funds = updated;
-  save(); renderAll();
-}
-
-// ── 删除基金 ────────────────────────────────────────
+// ── 删除基金 ─────────────────────────────────────────
 function removeFund(code) {
-  if (!confirm('确认删除该基金？')) return;
+  if (!confirm('确认删除？')) return;
   state.funds = state.funds.filter(f => f.code !== code);
   save(); renderAll();
 }
 
 // ── 添加操作记录 ─────────────────────────────────────
 function addOp(code) {
-  const type = document.getElementById('opType_' + code).value;
-  const nav = parseFloat(document.getElementById('opNav_' + code).value);
-  const amount = parseFloat(document.getElementById('opAmount_' + code).value);
-  if (!nav || !amount) { alert('请填写净值和金额'); return; }
-  const shares = amount / nav;
+  const type = document.getElementById('opType_'+code).value;
+  const nav = parseFloat(document.getElementById('opNav_'+code).value);
+  const amount = parseFloat(document.getElementById('opAmount_'+code).value);
+  if (!nav || !amount || isNaN(nav) || isNaN(amount)) { alert('请填写净值和金额'); return; }
+  const shares = (amount / nav).toFixed(2);
   const f = state.funds.find(f => f.code === code);
-  if (!f) return;
-
-  f.ops = f.ops || [];
-  f.ops.unshift({ date: today(), type, nav, amount, shares: shares.toFixed(2) });
-
-  // 更新持仓份额和成本净值
-  let totalShares = 0, totalCost = 0;
+  f.ops.unshift({ date: today(), type, nav, amount, shares });
+  // 重算份额和成本
+  let ts = 0, tc = 0;
   f.ops.forEach(op => {
-    if (op.type === 'buy') { totalShares += parseFloat(op.shares); totalCost += op.amount; }
-    else { totalShares -= parseFloat(op.shares); totalCost -= op.amount; }
+    const s = parseFloat(op.shares), a = parseFloat(op.amount);
+    if (op.type === 'buy') { ts += s; tc += a; }
+    else { ts -= s; tc -= a; }
   });
-  f.shares = Math.max(0, totalShares);
-  f.costNav = totalShares > 0 ? (totalCost / totalShares) : 0;
-
+  f.shares = Math.max(0, ts);
+  f.costNav = ts > 0 ? tc / ts : 0;
   save(); renderAll();
 }
 
-// ── 汇总计算 ─────────────────────────────────────────
-function calcSummary() {
-  let totalMv = 0, totalCost = 0, todayPnl = 0;
-  state.funds.forEach(f => {
-    const nav = parseFloat(f.estimatedNav || f.lastNav || 0);
-    const lastNav = parseFloat(f.lastNav || nav);
-    const shares = parseFloat(f.shares || 0);
-    const cost = parseFloat(f.costNav || 0) * shares;
-    const mv = nav * shares;
-    totalMv += mv;
-    totalCost += cost;
-    todayPnl += (nav - lastNav) * shares;
-  });
-  const profit = totalMv - totalCost;
-  const profitR = totalCost > 0 ? profit / totalCost * 100 : 0;
-  const todayR = totalCost > 0 ? todayPnl / totalCost * 100 : 0;
-
-  if (state.funds.length > 0) {
-    document.getElementById('summary').style.display = 'grid';
-    document.getElementById('sTotal').textContent = yuan(totalMv);
-    document.getElementById('sCost').textContent = yuan(totalCost);
-    const pEl = document.getElementById('sProfit');
-    pEl.textContent = (profit >= 0 ? '+' : '') + yuan(profit);
-    pEl.className = 'val ' + cls(profit);
-    document.getElementById('sProfitR').textContent = pct(profitR);
-    document.getElementById('sProfitR').className = 'sub ' + cls(profit);
-    const tEl = document.getElementById('sTodayPnl');
-    tEl.textContent = (todayPnl >= 0 ? '+' : '') + yuan(todayPnl);
-    tEl.className = 'val ' + cls(todayPnl);
-    document.getElementById('sTodayR').textContent = pct(todayR);
-    document.getElementById('sTodayR').className = 'sub ' + cls(todayPnl);
-  } else {
-    document.getElementById('summary').style.display = 'none';
-  }
+function toggleOpForm(code) {
+  const el = document.getElementById('opForm_'+code);
+  el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
-// ── 迷你走势图 ───────────────────────────────────────
+// ── 走势图 ───────────────────────────────────────────
 function miniChart(history) {
-  if (!history || !history.length) return '<div style="color:#ccc;font-size:12px">暂无历史数据</div>';
+  if (!history || !history.length) return '<div style="color:#ccc;font-size:11px;padding:8px 0">暂无历史数据，点刷新获取</div>';
   const vals = history.map(h => parseFloat(h.change));
   const maxAbs = Math.max(...vals.map(Math.abs), 0.01);
   return history.slice().reverse().map(h => {
     const v = parseFloat(h.change);
-    const h2 = Math.round(Math.abs(v) / maxAbs * 40) + 4;
-    const c = cls(v);
+    const barH = Math.round(Math.abs(v) / maxAbs * 36) + 4;
+    const color = v > 0 ? '#e5373f' : v < 0 ? '#1aad19' : '#ccc';
     return `<div class="bar-wrap">
-      <div class="bar-pct ${c}">${v > 0 ? '+' : ''}${v.toFixed(2)}%</div>
-      <div class="bar ${c === 'up' ? 'up' : c === 'down' ? 'down' : 'flat'}"
-           style="height:${h2}px;background:${v > 0 ? '#e5373f' : v < 0 ? '#1aad19' : '#ccc'}"></div>
+      <div class="bar-pct ${cls(v)}" style="font-size:9px">${v>0?'+':''}${v.toFixed(2)}%</div>
+      <div class="bar" style="height:${barH}px;background:${color}"></div>
       <div class="bar-date">${h.date.slice(5)}</div>
     </div>`;
   }).join('');
 }
 
-// ── 渲染单张卡片 ─────────────────────────────────────
+// ── 汇总 ─────────────────────────────────────────────
+function calcSummary() {
+  let totalMv=0, totalCost=0, todayPnl=0;
+  state.funds.forEach(f => {
+    const nav = parseFloat(f.estimatedNav || f.lastNav || 0);
+    const lastNav = parseFloat(f.lastNav || nav);
+    const shares = parseFloat(f.shares || 0);
+    const cost = parseFloat(f.costNav || 0) * shares;
+    totalMv += nav * shares;
+    totalCost += cost;
+    todayPnl += (nav - lastNav) * shares;
+  });
+  const profit = totalMv - totalCost;
+  const profitR = totalCost > 0 ? profit/totalCost*100 : 0;
+  const todayR = totalCost > 0 ? todayPnl/totalCost*100 : 0;
+  document.getElementById('summary').style.display = 'grid';
+  document.getElementById('sTotal').textContent = yuan(totalMv);
+  document.getElementById('sCost').textContent = yuan(totalCost);
+  const pEl = document.getElementById('sProfit');
+  pEl.textContent = (profit>=0?'+':'')+yuan(profit);
+  pEl.className = 'val '+cls(profit);
+  document.getElementById('sProfitR').textContent = pct(profitR);
+  document.getElementById('sProfitR').className = 'sub '+cls(profit);
+  const tEl = document.getElementById('sTodayPnl');
+  tEl.textContent = (todayPnl>=0?'+':'')+yuan(todayPnl);
+  tEl.className = 'val '+cls(todayPnl);
+  document.getElementById('sTodayR').textContent = pct(todayR);
+  document.getElementById('sTodayR').className = 'sub '+cls(todayPnl);
+}
+
+// ── 渲染单卡 ─────────────────────────────────────────
 function renderCard(f) {
   const nav = parseFloat(f.estimatedNav || f.lastNav || 0);
   const lastNav = parseFloat(f.lastNav || 0);
@@ -243,35 +244,35 @@ function renderCard(f) {
   const mv = nav * shares;
   const cost = costNav * shares;
   const profit = mv - cost;
-  const profitR = cost > 0 ? profit / cost * 100 : 0;
+  const profitR = cost > 0 ? profit/cost*100 : 0;
   const todayPnl = (nav - lastNav) * shares;
-
-  const ops = (f.ops || []).slice(0, 5);
+  const hasRealtime = !!f.estimatedNav;
+  const ops = (f.ops||[]).slice(0,5);
 
   return `<div class="card">
     <div class="card-header">
       <div class="fund-title">
         <div class="name">${f.name}</div>
-        <div class="meta"><span class="tag">${f.fundType || '基金'}</span>${f.code}</div>
+        <div class="meta"><span class="tag">${f.fundType||'基金'}</span>${f.code}</div>
       </div>
       <div class="nav-block">
         <div class="nav ${cls(chg)}">${f.estimatedNav || f.lastNav || '--'}</div>
-        <div class="change-badge ${bgCls(chg)}">${pct(chg)} ${f.estimatedNav ? '盘中估值' : '昨日净值'}</div>
-        ${f.estimatedNav ? `<div class="nav-sub">昨收 ${f.lastNav || '--'}</div>` : ''}
+        <div class="change-badge ${bgCls(chg)}">${pct(chg)} ${hasRealtime?'盘中估值':'昨日净值'}</div>
+        ${hasRealtime ? `<div class="nav-sub">昨收 ${f.lastNav||'--'}</div>` : ''}
+        ${f.estimatedTime ? `<div class="nav-sub">${f.estimatedTime}</div>` : ''}
       </div>
     </div>
 
-    ${shares > 0 ? `
     <div class="grid3">
       <div class="cell"><label>估算市值</label><div class="cv">${yuan(mv)}</div></div>
-      <div class="cell"><label>今日盈亏</label><div class="cv ${cls(todayPnl)}">${todayPnl >= 0 ? '+' : ''}${yuan(todayPnl)}</div></div>
-      <div class="cell"><label>持有收益</label><div class="cv ${cls(profit)}">${profit >= 0 ? '+' : ''}${yuan(profit)}<br><small>${pct(profitR)}</small></div></div>
+      <div class="cell"><label>今日盈亏</label><div class="cv ${cls(todayPnl)}">${todayPnl>=0?'+':''}${yuan(todayPnl)}</div></div>
+      <div class="cell"><label>持有收益</label><div class="cv ${cls(profit)}">${profit>=0?'+':''}${yuan(profit)}<br><small style="font-size:10px">${pct(profitR)}</small></div></div>
     </div>
     <div class="grid3">
       <div class="cell"><label>持有份额</label><div class="cv">${shares.toFixed(2)}</div></div>
       <div class="cell"><label>成本净值</label><div class="cv">${costNav.toFixed(4)}</div></div>
-      <div class="cell"><label>仓位</label><div class="cv">${shares > 0 ? '--' : '0%'}</div></div>
-    </div>` : `<div style="color:#bbb;font-size:12px;text-align:center;padding:8px 0">尚未录入持仓份额，请添加操作记录</div>`}
+      <div class="cell"><label>持仓成本</label><div class="cv">${yuan(cost)}</div></div>
+    </div>
 
     <div class="chart-wrap">
       <div class="chart-title">近5日净值涨跌</div>
@@ -279,56 +280,45 @@ function renderCard(f) {
     </div>
 
     <div class="ops-title">
-      <span>操作记录</span>
+      <span>操作记录（${(f.ops||[]).length}条）</span>
       <button class="toggle-ops" onclick="toggleOpForm('${f.code}')">+ 记录操作</button>
     </div>
     <div id="opForm_${f.code}" style="display:none">
       <div class="op-add-form">
-        <select id="opType_${f.code}">
-          <option value="buy">买入</option>
-          <option value="sell">卖出</option>
-        </select>
+        <select id="opType_${f.code}"><option value="buy">买入</option><option value="sell">卖出</option></select>
         <input id="opNav_${f.code}" type="number" placeholder="成交净值" step="0.0001"/>
         <input id="opAmount_${f.code}" type="number" placeholder="金额(元)"/>
         <button onclick="addOp('${f.code}')">确认</button>
       </div>
     </div>
     <div class="op-list">
-      ${ops.length ? ops.map(op => `
+      ${ops.length ? ops.map(op=>`
         <div class="op-item">
           <span>${op.date}</span>
-          <span class="op-type ${op.type === 'buy' ? 'op-buy' : 'op-sell'}">${op.type === 'buy' ? '买入' : '卖出'}</span>
+          <span class="op-type ${op.type==='buy'?'op-buy':'op-sell'}">${op.type==='buy'?'买入':'卖出'}</span>
           <span>净值 ${op.nav}</span>
           <span>${yuan(op.amount)}</span>
           <span>${parseFloat(op.shares).toFixed(2)}份</span>
         </div>`).join('') : '<div style="color:#ccc;font-size:12px;padding:6px 0">暂无操作记录</div>'}
     </div>
-
     <div style="text-align:right;margin-top:8px">
-      <button class="del-btn" onclick="removeFund('${f.code}')">✕ 删除</button>
+      <button class="del-btn" onclick="removeFund('${f.code}')">✕ 删除此基金</button>
     </div>
   </div>`;
 }
 
-function toggleOpForm(code) {
-  const el = document.getElementById('opForm_' + code);
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-
 // ── 渲染全部 ─────────────────────────────────────────
 function renderAll() {
-  const container = document.getElementById('cards');
-  if (!state.funds.length) {
-    container.innerHTML = '<div class="empty">暂无持仓，请添加基金代码</div>';
-    document.getElementById('summary').style.display = 'none';
-    return;
-  }
-  container.innerHTML = state.funds.map(renderCard).join('');
+  const c = document.getElementById('cards');
+  if (!state.funds.length) { c.innerHTML='<div class="empty">暂无持仓</div>'; return; }
+  c.innerHTML = state.funds.map(renderCard).join('');
   calcSummary();
 }
 
-document.getElementById('codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') addFund(); });
+document.getElementById('codeInput').addEventListener('keydown', e => { if(e.key==='Enter') addFund(); });
 renderAll();
+// 自动刷新行情
+refreshAll();
 </script>
 </body>
 </html>
