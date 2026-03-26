@@ -1,5 +1,5 @@
 
-```javascript
+javascript
 export default async function handler(req, res) {
   const { code } = req.query;
   if (!code) {
@@ -34,6 +34,3 @@ export default async function handler(req, res) {
     res.status(500).json({ error: '数据获取失败: ' + e.message });
   }
 }
-```
-
----
