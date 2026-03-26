@@ -1,6 +1,10 @@
-
-  基金实时估值
-  
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>基金实时估值</title>
+  <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif; background: #f5f7fa; min-height: 100vh; padding: 20px; }
     h1 { text-align: center; color: #333; margin-bottom: 24px; font-size: 22px; }
@@ -27,19 +31,19 @@
     .error-msg { color: #e5373f; font-size: 13px; margin-top: 4px; text-align: center; }
     .refresh-btn { display: block; margin: 0 auto 20px; padding: 8px 20px; background: #fff; border: 1px solid #4f87ff; color: #4f87ff; border-radius: 8px; cursor: pointer; font-size: 14px; }
     .refresh-btn:hover { background: #f0f5ff; }
-  
+  </style>
+</head>
+<body>
+  <h1>📈 基金实时估值</h1>
+  <div class="input-area">
+    <input id="codeInput" type="text" placeholder="输入基金代码，如 110022" maxlength="6"/>
+    <button onclick="addFund()">添加</button>
+  </div>
+  <div id="error" class="error-msg"></div>
+  <button class="refresh-btn" onclick="refreshAll()">🔄 刷新全部</button>
+  <div class="cards" id="cards"></div>
 
-
-  📈 基金实时估值
-  
-    
-    添加
-  
-  
-  🔄 刷新全部
-  
-
-  
+  <script>
     let funds = JSON.parse(localStorage.getItem('funds') || '[]');
 
     async function fetchFund(code) {
@@ -80,30 +84,32 @@
 
     function renderCards() {
       const container = document.getElementById('cards');
-      if (!funds.length) { container.innerHTML = '暂无基金，请添加基金代码'; return; }
+      if (!funds.length) { container.innerHTML = '<p style="text-align:center;color:#aaa;grid-column:1/-1">暂无基金，请添加基金代码</p>'; return; }
       container.innerHTML = funds.map(f => {
         const chg = parseFloat(f.estimatedChange);
         const cls = chg > 0 ? 'up' : chg < 0 ? 'down' : 'flat';
         const sign = chg > 0 ? '+' : '';
         return `
-          
-            
-              
-                ${f.name}
-                ${f.code}
-              
-              ✕
-            
-            
-              ${f.estimatedNav}
-              ${sign}${chg.toFixed(2)}%
-            
-            昨日净值：${f.lastNav}（${f.lastNavDate}）
-            估值时间：${f.estimatedTime}
-          `;
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="fund-name">${f.name}</div>
+                <div class="fund-code">${f.code}</div>
+              </div>
+              <button class="remove-btn" onclick="removeFund('${f.code}')">✕</button>
+            </div>
+            <div class="nav-row">
+              <div class="estimated-nav" style="color:${cls==='up'?'#e5373f':cls==='down'?'#1aad19':'#333'}">${f.estimatedNav}</div>
+              <div class="change ${cls}">${sign}${chg.toFixed(2)}%</div>
+            </div>
+            <div class="last-nav">昨日净值：${f.lastNav}（${f.lastNavDate}）</div>
+            <div class="meta">估值时间：${f.estimatedTime}</div>
+          </div>`;
       }).join('');
     }
 
     document.getElementById('codeInput').addEventListener('keydown', e => { if (e.key === 'Enter') addFund(); });
     renderCards();
-  
+  </script>
+</body>
+</html>
